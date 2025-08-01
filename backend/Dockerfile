@@ -6,8 +6,6 @@ WORKDIR /app
 # システムの依存関係をインストール
 RUN apt-get update && apt-get install -y \
     gcc \
-    postgresql-client \
-    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Pythonの依存関係をインストール
@@ -16,6 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # アプリケーションのコードをコピー
 COPY . .
+
+# データベースのマイグレーションを実行
+RUN python manage.py migrate
+
+# デフォルトのスーパーユーザーを作成
+RUN python manage.py create_default_superuser
 
 # 静的ファイルを収集
 RUN python manage.py collectstatic --noinput

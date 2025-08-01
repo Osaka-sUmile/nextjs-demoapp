@@ -87,12 +87,6 @@ DATABASES = {
     }
 }
 
-# 本番環境用PostgreSQL設定
-import os
-if os.environ.get('DATABASE_URL'):
-    import dj_database_url
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
