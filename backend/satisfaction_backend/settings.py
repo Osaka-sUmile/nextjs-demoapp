@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-o&24^pv8(ph-=sfq*1&1e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,6 +87,12 @@ DATABASES = {
     }
 }
 
+# 本番環境用PostgreSQL設定
+import os
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,6 +129,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise設定
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -132,11 +143,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
-    # "http://localhost:3001",
-    # "http://127.0.0.1:3001",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+# 本番環境の場合、環境変数からフロントエンドURLを取得
+PRODUCTION_FRONTEND_URL = config('PRODUCTION_FRONTEND_URL', default='')
+if PRODUCTION_FRONTEND_URL:
+    CORS_ALLOWED_ORIGINS.append(PRODUCTION_FRONTEND_URL)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -145,9 +159,11 @@ CSRF_TRUSTED_ORIGINS = [
     FRONTEND_URL,
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:3003",
-    "http://127.0.0.1:3003",
 ]
+
+# 本番環境のCSRF設定
+if PRODUCTION_FRONTEND_URL:
+    CSRF_TRUSTED_ORIGINS.append(PRODUCTION_FRONTEND_URL)
 
 # カスタムユーザーモデル
 AUTH_USER_MODEL = 'users.User'

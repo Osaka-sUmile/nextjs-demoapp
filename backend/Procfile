@@ -1,0 +1,1 @@
+web: gunicorn satisfaction_backend.wsgi --log-file -
