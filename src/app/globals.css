@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, Arial, Helvetica, sans-serif;
+}
+
+/* アプリ全体のレイアウト調整 */
+.app-container {
+  min-height: 100vh;
+  padding-bottom: 4rem; /* フッターナビゲーションの高さ分 */
+}
+
+/* フッターナビゲーション用のスペース確保 */
+.main-content {
+  padding-bottom: 1rem;
+}
+
+/* カスタムスクロールバー */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fb923c;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* 満足度画像の表示調整 */
+.satisfaction-image {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(251, 146, 60, 0.1);
+}
+
+.satisfaction-badge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 2px solid #fb923c;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #ea580c;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
